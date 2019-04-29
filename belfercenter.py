@@ -40,6 +40,7 @@ def get_body_info(url):
     content = ''
     for i in info:
         content += str(i).strip()
+    print(content)
     return content
 
 
@@ -50,12 +51,12 @@ def getAll(index):
     title_items = html.xpath('//div[@class="views-row"]//h2[@class="title"]/a/span/text()')
     link_items = html.xpath('//div[@class="views-row"]//h2[@class="title"]/a/@href')
     # author_items = html.xpath('//div[@class="views-row"]//ul[@class="people-group related-group"]//text()')
-    time_items = html.xpath(
-        '//div[@class="views-row"]//span[@class="pub-date"]/text()')
+    time_items = html.xpath('//div[@class="view-publication-author-and-date"]/span[@class="pub-date"]/text()[last()]')
     author_and_relate = html.xpath('//div[@class="view-publication-author-and-date"]')
     author = []
     relate = []
-    print(time_items)
+
+    # print(time_items)
     for key, val in enumerate(author_and_relate):
         authors = val.xpath('ul/li[@class="author"]//text()')
         relates = val.xpath('ul/li[@class="related"]//text()')
@@ -75,12 +76,12 @@ def getAll(index):
         m.update(newurl.encode('utf-8'))
         urlid = m.hexdigest()
         published = None
-        if ',' in time_items[2 * i + 1].strip():
-            if '.' in time_items[2 * i + 1].strip():
-                published = datetime.datetime.strptime((time_items[2 * i + 1].strip()), '%b. %d, %Y')
+        if ',' in time_items[i].strip():
+            if '.' in time_items[i].strip():
+                published = datetime.datetime.strptime((time_items[i].strip()), '%b. %d, %Y')
             else:
-                published = datetime.datetime.strptime((time_items[2 * i + 1].strip()), '%B %d, %Y')
-        # content = get_body_info(link_items[i])
+                published = datetime.datetime.strptime((time_items[i].strip()), '%B %d, %Y')
+        content = get_body_info(link_items[i])
         # pagel = pagelink(title, newurl, content, published)
         # pagel.save()
         # custom_t = custom_task(title, newurl, urlid, content, author[i], relate[i], published, taskName='belfer_task')
@@ -90,5 +91,6 @@ def getAll(index):
 
 if __name__ == '__main__':
     # connect('fangxwtest', host='168.160.18.104', port=27017)
-    for i in range(0, 10):
+    for i in range(55, 90):
+        print(i)
         getAll(i)
