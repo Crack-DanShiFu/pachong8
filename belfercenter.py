@@ -1,5 +1,6 @@
 import datetime
 import hashlib
+import re
 
 import requests
 from lxml import etree
@@ -76,21 +77,26 @@ def getAll(index):
         m.update(newurl.encode('utf-8'))
         urlid = m.hexdigest()
         published = None
-        if ',' in time_items[i].strip():
-            if '.' in time_items[i].strip():
-                published = datetime.datetime.strptime((time_items[i].strip()), '%b. %d, %Y')
-            else:
-                published = datetime.datetime.strptime((time_items[i].strip()), '%B %d, %Y')
+        if re.match('\w+\. \d+\, \d+', time_items[i].strip()):
+            published = datetime.datetime.strptime(time_items[i].strip(), '%b. %d, %Y')
+        if re.match('\w+ \d+\, \d+', time_items[i].strip()):
+            published = datetime.datetime.strptime(re.match('\w+ \d+\, \d+', time_items[i].strip())[0], '%B %d, %Y')
+        # if '.' in time_items[i].strip():
+        #     print(1)
+        #     published = datetime.datetime.strptime((time_items[i].strip()), '%b. %d, %Y')
+        # else:
+        #     print(2)
+        #     published = datetime.datetime.strptime((time_items[i].strip()), '%B %d, %Y')
         content = get_body_info(link_items[i])
-        # pagel = pagelink(title, newurl, content, published)
-        # pagel.save()
-        # custom_t = custom_task(title, newurl, urlid, content, author[i], relate[i], published, taskName='belfer_task')
-        # custom_t.save()
+        pagel = pagelink(title, newurl, content, published)
+        pagel.save()
+        custom_t = custom_task(title, newurl, urlid, content, author[i], relate[i], published, taskName='belfer_task')
+        custom_t.save()
         print(title + '----写入')
 
 
 if __name__ == '__main__':
     # connect('fangxwtest', host='168.160.18.104', port=27017)
-    for i in range(55, 90):
+    for i in range(0, 90):
         print(i)
         getAll(i)
