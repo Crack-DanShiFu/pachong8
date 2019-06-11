@@ -1,6 +1,7 @@
 import time
 
 import requests
+import xlwt
 from xlutils.copy import copy as xl_copy
 import xlrd
 from lxml import etree
@@ -34,8 +35,7 @@ def get_main(url1, city):
     NO2 = html_info.xpath('//tr[position()>1]/td[9]/text()')
     O3 = html_info.xpath('//tr[position()>1]/td[10]/text()')
 
-    rb = xlrd.open_workbook('test.xls', formatting_info=True)
-    wb = xl_copy(rb)
+    wb = xlwt.Workbook()
     sheet = wb.add_sheet(city)
     for k, v in enumerate(head):
         sheet.write(0, k, v)  # i行0列
@@ -50,7 +50,7 @@ def get_main(url1, city):
         sheet.write(k + 1, 7, float(CO[k]))  # i行0列
         sheet.write(k + 1, 8, float(NO2[k]))  # i行0列
         sheet.write(k + 1, 9, float(O3[k]))  # i行0列
-    wb.save('test.xls')
+    wb.save('all_month.xls')
     browser.close()
     time.sleep(1)
 

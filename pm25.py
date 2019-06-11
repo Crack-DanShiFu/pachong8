@@ -2,26 +2,15 @@ import threading
 import time
 
 import requests
-from xlutils.copy import copy as xl_copy
-import xlrd
+import xlwt
 from lxml import etree
 from selenium import webdriver
 
-url = 'https://www.aqistudy.cn/historydata/'
-flag = 0
-parms = {
 
-}
-head = ['日期', 'AQI', '质量等级', 'PM2.5', 'PM10', 'SO2', 'CO', 'NO2', 'O3_8h']
-rb = xlrd.open_workbook('test.xls', formatting_info=True)
-wb = xl_copy(rb)
-
-
-def get_main(url1, city):
+def get_main(url1, city, head):
     print(city)
-
+    wb = xlwt.Workbook()
     sheet = wb.add_sheet(city)
-
     browser = webdriver.Chrome()
     browser.get(url1)
     time.sleep(10)
@@ -36,7 +25,7 @@ def get_main(url1, city):
         print(city, m)
         u = 'https://www.aqistudy.cn/historydata/daydata.php?city=' + city + '&month=' + m.replace('-', '')
         browser.get(u)
-        time.sleep(2)
+        time.sleep(4)
         html = browser.find_element_by_xpath("//table").get_attribute('innerHTML')
         html_info = etree.HTML(html)
 
@@ -60,28 +49,39 @@ def get_main(url1, city):
             sheet.write(flag, 7, float(NO2[k]))  # i行0列
             sheet.write(flag, 8, float(O3[k]))  # i行0列
             flag += 1
+    wb.save('city/' + city + '.xls')
     browser.close()
     time.sleep(1)
 
 
 # get_main('https://www.aqistudy.cn/historydata/monthdata.php?city=%E9%98%BF%E5%9D%9D%E5%B7%9E', '阿坝州')
 
-html = requests.post(url, data=parms)
-html_info = etree.HTML(html.text)
-href = html_info.xpath('//div[@class="all"]//ul/div[2]/li/a/@href')
-citys = html_info.xpath('//div[@class="all"]//ul/div[2]/li/a/text()')
 
-threads = []
+if __name__ == '__main__':
+    url = 'https://www.aqistudy.cn/historydata/'
+    # 头部
+    head = ['日期', 'AQI', '质量等级', 'PM2.5', 'PM10', 'SO2', 'CO', 'NO2', 'O3_8h']
 
-for k, v in enumerate(href):
-    details_url = 'https://www.aqistudy.cn/historydata/' + v
-    city = citys[k]
-    # threads.append(threading.Thread(target=get_main, args=(details_url, city)))
-print(len(href))
+    html = requests.post(url)
+    html_info = etree.HTML(html.text)
+    href = html_info.xpath('//div[@class="all"]//ul/div[2]/li/a/@href')
+    citys = html_info.xpath('//div[@class="all"]//ul/div[2]/li/a/text()')
+    threads = []
+    for k, v in enumerate(href):
+        details_url = 'https://www.aqistudy.cn/historydata/' + v
+        city = citys[k]
+        threads.append(threading.Thread(target=get_main, args=(details_url, city, head)))
+    print(len(href))
+    print(len(threads))
 
-#
-# for j in range(38, 39):
-#     for i in threads[j * 10:j * 10 + 4]:
-#         i.start()
-#     i.join()
-# wb.save('test.xls')
+    sum_of_t = 10  # 同时爬取的数量
+    start = 0
+    for i in range(39):
+        if i * sum_of_t + sum_of_t <= 380:
+            for t in threads[i * sum_of_t: i * sum_of_t + sum_of_t]:
+                t.start()
+            t.join()
+        else:
+            for t in threads[i * sum_of_t:]:
+                t.start()
+            t.join()
