@@ -79,11 +79,11 @@ def get_page(index, num):
         many_result.append(list(result.values()))
     for r in many_result:
         print(r)
-    insert_db(many_result)
+    # insert_db(many_result)
 
 
 def insert_db(result):
-    conn = mdb.connect(host='47.107.173.225', port=3306, user='root', passwd='root', db='tb', charset='utf8mb4')
+    conn = mdb.connect(host='127.0.0.1', port=3306, user='root', passwd='root', db='tb', charset='utf8mb4')
     cursor = conn.cursor()
     cursor.executemany('INSERT INTO buyers_show values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
                        result)
