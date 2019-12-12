@@ -5,7 +5,6 @@ import pandas as pd
 
 def get_info():
     result = []
-
     for i in range(1, 11):
         url = 'https://bj.lianjia.com/ershoufang/pg' + str(i) + 'rs%E5%8C%97%E4%BA%AC/'
         # 请求头
@@ -26,11 +25,12 @@ def get_info():
             info = []
             info.append(v[0])
             houseInfo = str(v[1]).replace('<span class="divide">/</span>', '/').split('/')
-            if len(houseInfo) is not 5:
+            if len(houseInfo) != 5:
                 houseInfo.append('/')
             info.extend(houseInfo)
             info.append(title_list[k][0])
             result.append(info)
+    print(result)
     return result
 
 

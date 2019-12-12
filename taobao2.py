@@ -16,7 +16,7 @@ def get_page(index, num):
     appKey = '12574478'
     # 获取当前时间戳
     t = str(int(time.time() * 1000))
-    data = '{"params":"{\\"nodeId\\":\\"\\",\\"sellerId\\":\\"50852803\\",\\"pagination\\":{\\"direction\\":\\"1\\",\\"hasMore\\":\\"true\\",\\"pageNum\\":\\"' + str(
+    data = '{"params":"{\\"nodeId\\":\\"\\",\\"sellerId\\":\\"2947574489\\",\\"pagination\\":{\\"direction\\":\\"1\\",\\"hasMore\\":\\"true\\",\\"pageNum\\":\\"' + str(
         index) + '\\",\\"pageSize\\":\\"' + str(num) + '\\"}}","cursor":"' + str(
         index) + '","pageNum":"' + str(
         index) + '","pageId":5703,"env":"1"}'
@@ -91,6 +91,6 @@ def insert_db(result):
     conn.close()
 
 
-for i in range(19, 20):
+for i in range(20):
     get_page(i, 20)
     time.sleep(2)
