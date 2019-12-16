@@ -1,39 +1,56 @@
+import hashlib
 import json
-import re
-
+import time
 import requests
-from selenium import webdriver
 
 
-def getPages():
-    url = 'https://h5api.m.taobao.com/h5/mtop.taobao.detail.getdesc/6.0/'
-    params = {
-        # 'jsv': '2.5.6',
-        # 'appKey': '12574478',
-        # 't': '1576139974507',
-        # 'sign': '38003d6eff439d2a92a26152991303a6',
-        # 'api': 'mtop.taobao.detail.getdesc',
-        # 'v': '6.0',
-        # 'isSec': '0',
-        # 'ecode': '0',
-        # 'AntiFlood': 'true',
-        # 'AntiCreep': 'true',
-        # 'H5Request': 'true',
-        # 'type': 'jsonp',
-        # 'dataType': 'jsonp',
-        'callback': 'mtopjsonp2',
-        'data': '{"id": "555107532169", "type": "0"}'
-    }
-    resp = requests.get(url, params=params)
-    pattern1 = re.compile(r'mtopjsonp2\((.*?)\)', re.S)
-    result = pattern1.findall(str(resp.text))[0]
-    for i in json.loads(result)['data']['wdescContent']['pages']:
-        print(i)
+# import pymysql as mdb
 
 
-url = 'https://shop414515647.taobao.com/search.htm?spm=a1z10.3-c.0.0.57016a7fRe09M5&search=y'
-browser = webdriver.Chrome()
-browser.add_cookie({
-    'cookie': 't=57f094909d14cb053ee724ca93eb3343; hng=CN%7Czh-CN%7CCNY%7C156; thw=cn; _m_h5_tk=59c72c3570b249fb6311d9ec8c23e7b6_1576147169050; _m_h5_tk_enc=911a5080b835a99138faf15a2acd8402; cookie2=18a1841af6819273f6fe9848383570f9; _tb_token_=f60bb6d86083e; cna=FOhSFsYv7igCAS11KFOpjAqE; unb=2206949545669; uc3=nk2=AGiWmiM3gRY%3D&lg2=WqG3DMC9VAQiUQ%3D%3D&id2=UUphzOvBsfqxv1oBDA%3D%3D&vt3=F8dByus7Sabkgh8jzIc%3D; csg=c3262218; lgc=cracklcz; cookie17=UUphzOvBsfqxv1oBDA%3D%3D; dnk=cracklcz; skt=b818a953f95be90c; existShop=MTU3NjE0NTAyMQ%3D%3D; uc4=nk4=0%40AgbP7VEAD%2FiOHAlcoyCsSGcN7A%3D%3D&id4=0%40U2grF8CNEuHb01oI3nGl2mkmn2w2s6OH; tracknick=cracklcz; _cc_=Vq8l%2BKCLiw%3D%3D; tg=5; _l_g_=Ug%3D%3D; sg=z99; _nk_=cracklcz; cookie1=UteB7PaMtfqJMJSIvbHb6LJbc1Ky%2FaDzoWyzZ1yBf1M%3D; mt=ci=-1_1; v=0; x5sec=7b2273686f7073797374656d3b32223a2232343162393263313363633834656661643935393361663066376634653665334349366b794f3846454958752f6366706b714f484f686f504d6a49774e6a6b304f5455304e5459324f547378227d; uc1=cart_m=0&cookie14=UoTbm8bqffxyzQ%3D%3D&lng=zh_CN&cookie16=V32FPkk%2FxXMk5UvIbNtImtMfJQ%3D%3D&existShop=false&cookie21=W5iHLLyFfoaZ&tag=8&cookie15=VFC%2FuZ9ayeYq2g%3D%3D&pas=0; pnm_cku822=098%23E1hvwQvUvbpvUvCkvvvvvjiPRsdh6jlHPsLpljljPmPp6jrbP2FhQjDvRFsWsjYRiQhvChCvCCpPvpvhvv2MMQyCvh1HXzUvIqpyCjvnY4mQRoaobZkt6fy78Z1S7SjvDE6kZmxhdJA1%2B2n7OHbI32RTby66cf0tH2i%2Bv0yosa06Rknb4vJyqfVQWlX9ZRFEuphvmhCvCb5GxePfkphvCyEmmvAf5byCvm3vpvmkMMYvuZCv2PGvvh7Pphv%2BvQvvBrivpmQ2vvCVJZCvEWpvvhXMvphvCyCCvvvvv2yCvvBvpvvv; l=dB_nCFFmq0yyRShFBOCwourza77OSIRAguPzaNbMi_5Bh6L_GO7OkE-SQFp6VjWfMM8B4_9r3Je9-etbioGmhrGTCkIfcxDc.; isg=BN3d6Y9FXI6cSTiFQ9u2MwjQ7L_X-hFM4310G5-iGTRjVv2IZ0ohHKtAgAp1likE'
-})
-browser.get(url)
+def hex_md5(s):
+    m = hashlib.md5()
+    m.update(s.encode('UTF-8'))
+    return m.hexdigest()
+
+
+url = 'https://acs.m.taobao.com/h5/mtop.taobao.social.feed.aggregate/1.0/'
+appKey = '12574478'
+# 获取当前时间戳
+t = str(int(time.time() * 1000))
+data = '{"m":"shopitemsearch","vm":"nw","sversion":"4.6","shopId":"414515647","sellerId":"2947574489","style":"wf","page":1,"sort":"_coefp","catmap":"","wirelessShopCategoryList":""}'
+params = {
+    'appKey': appKey,
+    'data': data
+}
+# 请求空获取cookies
+html = requests.get(url, params=params)
+print(html.cookies)
+_m_h5_tk = html.cookies['_m_h5_tk']
+_m_h5_tk_enc = html.cookies['_m_h5_tk_enc']
+
+token = _m_h5_tk.split('_')[0]
+cookie_t = html.cookies['t']
+u = token + '&' + t + '&' + appKey + '&' + data
+# MD5加密
+sign = hex_md5(u)
+print('秘钥：' + sign)
+# 设置第二次请求的cookie
+headers = {
+    'cookie': 'cna=j4Z+FsZrKjUCASSd6HWEm5vQ; cookie2=119e42a6aa5663aa978d39b69315a25a; t=849281c28cb9908652bd99233373670b; _tb_token_=7d79e335e57e;'
+              '_m_h5_tk=' + _m_h5_tk +
+              '; _m_h5_tk_enc=' + _m_h5_tk_enc +
+              '; v=0; thw=cn; ockeqeudmj=umVkltE%3D; munb=2206949545669; WAPFDFDTGFG=%2B4cMKKP%2B8PI%2BP6tPi2aDX%2FGrBg%3D%3D; _w_app_lg=0; unb=2206949545669; sg=z99; _l_g_=Ug%3D%3D; skt=ac66cfe978c3ecc7; uc1=cookie21=UIHiLt3xTIkz&cookie15=Vq8l%2BKCLz3%2F65A%3D%3D&cookie14=UoTbm8LS819%2BCA%3D%3D; cookie1=UteB7PaMtfqJMJSIvbHb6LJbc1Ky%2FaDzoWyzZ1yBf1M%3D; csg=f8aa26e9; uc3=vt3=F8dByuqm7Z8PmBLdatY%3D&id2=UUphzOvBsfqxv1oBDA%3D%3D&nk2=AGiWmiM3gRY%3D&lg2=WqG3DMC9VAQiUQ%3D%3D; tracknick=cracklcz; lgc=cracklcz; _cc_=VFC%2FuZ9ajQ%3D%3D; dnk=cracklcz; _nk_=cracklcz; cookie17=UUphzOvBsfqxv1oBDA%3D%3D; ntm=1; enc=mv5HNurIv8zuL2IZwWuvnR%2B4CT7zYlFgAAoFZAy7mbuV2SXFpAejgXi7EcKWsYqUUH0Rk2xnEhIFZgpClvo%2Bcw%3D%3D; linezing_session=jespgVWLaPC8RdXQvFa1Lr2T_1576507701651HP4H_2; isg=BA4O1RgV346N-2uq54SvcDcmX-LQj9KJ_4bLEDhXepHMm671oB8imbRa18f3g8qh',
+}
+params = {
+    'appKey': appKey,
+    't': t,
+    'sign': sign,
+    'data': data
+}
+url = 'https://h5api.m.taobao.com/h5/mtop.taobao.wsearch.appsearch/1.0/'
+
+html = requests.get(url, headers=headers, params=params)
+html.encoding = 'utf-8'
+item = json.loads(html.text)
+for i in item['data']['itemsArray']:
+    print(i)

@@ -2,7 +2,7 @@ import hashlib
 import json
 import time
 import requests
-import pymysql as mdb
+# import pymysql as mdb
 
 
 def hex_md5(s):
@@ -82,13 +82,13 @@ def get_page(index, num):
     # insert_db(many_result)
 
 
-def insert_db(result):
-    conn = mdb.connect(host='127.0.0.1', port=3306, user='root', passwd='root', db='tb', charset='utf8mb4')
-    cursor = conn.cursor()
-    cursor.executemany('INSERT INTO buyers_show values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
-                       result)
-    conn.commit()
-    conn.close()
+# def insert_db(result):
+#     conn = mdb.connect(host='127.0.0.1', port=3306, user='root', passwd='root', db='tb', charset='utf8mb4')
+#     cursor = conn.cursor()
+#     cursor.executemany('INSERT INTO buyers_show values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
+#                        result)
+#     conn.commit()
+#     conn.close()
 
 
 for i in range(20):
