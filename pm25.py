@@ -2,15 +2,15 @@ import threading
 import time
 
 import requests
-import xlwt
+# import xlwt
 from lxml import etree
 from selenium import webdriver
 
 
 def get_main(url1, city, head):
     print(city)
-    wb = xlwt.Workbook()
-    sheet = wb.add_sheet(city)
+    # wb = xlwt.Workbook()
+    # sheet = wb.add_sheet(city)
     browser = webdriver.Chrome()
     browser.get(url1)
     time.sleep(10)
@@ -18,8 +18,8 @@ def get_main(url1, city, head):
     html_info = etree.HTML(html)
     month = html_info.xpath('//tr[position()>1]/td[1]/a/text()')
     flag = 0
-    for k, v in enumerate(head):
-        sheet.write(0, k, v)  # i行0列
+    # for k, v in enumerate(head):
+    #     sheet.write(0, k, v)  # i行0列
     flag += 1
     for m in month:
         print(city, m)
@@ -57,31 +57,33 @@ def get_main(url1, city, head):
 # get_main('https://www.aqistudy.cn/historydata/monthdata.php?city=%E9%98%BF%E5%9D%9D%E5%B7%9E', '阿坝州')
 
 
-if __name__ == '__main__':
-    url = 'https://www.aqistudy.cn/historydata/'
-    # 头部
-    head = ['日期', 'AQI', '质量等级', 'PM2.5', 'PM10', 'SO2', 'CO', 'NO2', 'O3_8h']
+# if __name__ == '__main__':
+#     url = 'https://www.aqistudy.cn/historydata/'
+#     # 头部
+#     head = ['日期', 'AQI', '质量等级', 'PM2.5', 'PM10', 'SO2', 'CO', 'NO2', 'O3_8h']
+#
+#     html = requests.post(url)
+#     html_info = etree.HTML(html.text)
+#     href = html_info.xpath('//div[@class="all"]//ul/div[2]/li/a/@href')
+#     citys = html_info.xpath('//div[@class="all"]//ul/div[2]/li/a/text()')
+#     threads = []
+#     for k, v in enumerate(href):
+#         details_url = 'https://www.aqistudy.cn/historydata/' + v
+#         city = citys[k]
+#         threads.append(threading.Thread(target=get_main, args=(details_url, city, head)))
+#     print(len(href))
+#     print(len(threads))
+#
+#     sum_of_t = 10  # 同时爬取的数量
+#     start = 0
+#     for i in range(39):
+#         if i * sum_of_t + sum_of_t <= 380:
+#             for t in threads[i * sum_of_t: i * sum_of_t + sum_of_t]:
+#                 t.start()
+#             t.join()
+#         else:
+#             for t in threads[i * sum_of_t:]:
+#                 t.start()
+#             t.join()
 
-    html = requests.post(url)
-    html_info = etree.HTML(html.text)
-    href = html_info.xpath('//div[@class="all"]//ul/div[2]/li/a/@href')
-    citys = html_info.xpath('//div[@class="all"]//ul/div[2]/li/a/text()')
-    threads = []
-    for k, v in enumerate(href):
-        details_url = 'https://www.aqistudy.cn/historydata/' + v
-        city = citys[k]
-        threads.append(threading.Thread(target=get_main, args=(details_url, city, head)))
-    print(len(href))
-    print(len(threads))
 
-    sum_of_t = 10  # 同时爬取的数量
-    start = 0
-    for i in range(39):
-        if i * sum_of_t + sum_of_t <= 380:
-            for t in threads[i * sum_of_t: i * sum_of_t + sum_of_t]:
-                t.start()
-            t.join()
-        else:
-            for t in threads[i * sum_of_t:]:
-                t.start()
-            t.join()
